@@ -14,11 +14,40 @@ class ViewController: UIViewController,UIPickerViewDelegate,UIPickerViewDataSour
     
     let baseURL = "https://apiv2.bitcoinaverage.com/indices/global/ticker/BTC"
     let currencyArray = ["AUD", "BRL","CAD","CNY","EUR","GBP","HKD","IDR","ILS","INR","JPY","MXN","NOK","NZD","PLN","RON","RUB","SEK","SGD","USD","ZAR"]
+    let currencySymbol = ["$", "R$", "$", "¥", "€", "£", "$", "Rp", "₪", "₹", "¥", "$", "kr", "$", "zł", "lei", "₽", "kr", "$", "$", "R"]
     var finalURL = ""
+    
+    var currencyChoosedSymbol = ""
+    
 
     //Pre-setup IBOutlets
     @IBOutlet weak var bitcoinPriceLabel: UILabel!
     @IBOutlet weak var currencyPicker: UIPickerView!
+    
+    
+    //MARK- number of components
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return currencyArray.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        finalURL = baseURL + currencyArray[row]
+        print(finalURL)
+        currencyChoosedSymbol = currencySymbol[row]
+        return currencyArray[row]
+        
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        getPriceData(url: finalURL)
+        
+    }
+    
     
 
     
@@ -45,12 +74,13 @@ class ViewController: UIViewController,UIPickerViewDelegate,UIPickerViewDataSour
     
     func getPriceData(url: String) {
         
-        Alamofire.request(url, method: .get)
+        Alamofire.request(finalURL, method: .get)
             .responseJSON { response in
                 if response.result.isSuccess {
 
                     print("Sucess! Got the Price data")
                     let PriceJSON : JSON = JSON(response.result.value!)
+                    print(PriceJSON)
 
                     self.updateBitcoinData(json: PriceJSON)
 
@@ -63,37 +93,15 @@ class ViewController: UIViewController,UIPickerViewDelegate,UIPickerViewDataSour
     }
     
     
-    //MARK- number of components
-    
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-    return currencyArray.count
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-                finalURL = baseURL + currencyArray[row]
-        print(finalURL)
-        return currencyArray[row]
-
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        getPriceData(url: currencyArray[row])
-        print(currencyArray[row])
-    }
-    
-    
+   
 
 //
 //    //MARK: - JSON Parsing
 //    /***************************************************************/
     
     func updateBitcoinData(json : JSON){
-        if var tempResult = json["main"]["temp"].double {
-            bitcoinPriceLabel.text = String(tempResult)
+        if var tempResult = json["ask"].double {
+            bitcoinPriceLabel.text = currencyChoosedSymbol + String(tempResult)
            
         }else{
             print("error")
