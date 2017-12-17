@@ -24,6 +24,9 @@ class ViewController: UIViewController,UIPickerViewDelegate,UIPickerViewDataSour
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        currencyPicker.delegate = self
+        currencyPicker.dataSource = self
+        
        
     }
 
@@ -49,7 +52,7 @@ class ViewController: UIViewController,UIPickerViewDelegate,UIPickerViewDataSour
                     print("Sucess! Got the Price data")
                     let PriceJSON : JSON = JSON(response.result.value!)
 
-                    self.updatePriceData(json: PriceJSON)
+                    self.updateBitcoinData(json: PriceJSON)
 
                 } else {
                     print("Error: \(String(describing: response.result.error))")
@@ -58,24 +61,49 @@ class ViewController: UIViewController,UIPickerViewDelegate,UIPickerViewDataSour
             }
 
     }
+    
+    
+    //MARK- number of components
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+    return currencyArray.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+                finalURL = baseURL + currencyArray[row]
+        print(finalURL)
+        return currencyArray[row]
 
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        getPriceData(url: currencyArray[row])
+        print(currencyArray[row])
+    }
     
     
-    
+
 //
 //    //MARK: - JSON Parsing
 //    /***************************************************************/
     
-    func updateBitcoinData(json : JSON) {
-        
-        if let tempResult = json["main"]["temp"].double {
-        
-        
+    func updateBitcoinData(json : JSON){
+        if var tempResult = json["main"]["temp"].double {
+            bitcoinPriceLabel.text = String(tempResult)
+           
+        }else{
+            print("error")
+        }
     }
     
 
 
 
+    }
 
-}
+
 
