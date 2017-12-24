@@ -24,6 +24,11 @@ class ViewController: UIViewController,UIPickerViewDelegate,UIPickerViewDataSour
     @IBOutlet weak var bitcoinPriceLabel: UILabel!
     @IBOutlet weak var currencyPicker: UIPickerView!
     
+    @IBOutlet weak var dayAverage: UILabel!
+    @IBOutlet weak var volume: UILabel!
+    @IBOutlet weak var open: UILabel!
+    @IBOutlet weak var openHour: UILabel!
+    @IBOutlet weak var high: UILabel!
     
     //MARK- number of components
     
