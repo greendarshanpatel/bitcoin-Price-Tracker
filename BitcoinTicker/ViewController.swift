@@ -105,8 +105,14 @@ class ViewController: UIViewController,UIPickerViewDelegate,UIPickerViewDataSour
 //    /***************************************************************/
     
     func updateBitcoinData(json : JSON){
+        dayAverage.text = String(describing: json["average"]["day"])
+        volume.text = String(describing: json["volume"])
+        open.text = String(describing: json["open"]["day"])
+        openHour.text = String(describing: json["open"]["hour"])
+        high.text = String(describing: json["high"])
         if var tempResult = json["ask"].double {
             bitcoinPriceLabel.text = currencyChoosedSymbol + String(tempResult)
+            
            
         }else{
             print("error")
